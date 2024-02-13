@@ -1,4 +1,4 @@
-package com.example.playgroundmoviesapp.ui.theme
+package com.example.presentation.ui.foundation.theme
 
 import androidx.compose.ui.graphics.Color
 

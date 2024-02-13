@@ -17,3 +17,4 @@ rootProject.name = "Playground Movies App"
 include(":app")
 include(":domain")
 include(":presentation")
+include(":data")

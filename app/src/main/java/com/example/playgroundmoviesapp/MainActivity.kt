@@ -3,50 +3,56 @@ package com.example.playgroundmoviesapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.domain.entity.MoviePreview
-import com.example.domain.usecase.GetMoviePreviewUseCase
-import com.example.playgroundmoviesapp.ui.theme.PlaygroundMoviesAppTheme
+import androidx.navigation.compose.rememberNavController
+import com.example.presentation.ui.foundation.AppRoutes
+import com.example.presentation.ui.foundation.NavigationGraph
+import com.example.presentation.ui.foundation.theme.PlaygroundMoviesAppTheme
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
+@ExperimentalMaterial3Api
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject
-    lateinit var getMoviePreviewUseCase: GetMoviePreviewUseCase
-
+    val mainActivityViewModel: MainActivityViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             PlaygroundMoviesAppTheme {
-                var moviePreviews by remember { mutableStateOf(emptyList<MoviePreview>()) }
-                // A surface container using the 'background' color from the theme
-                Surface(
+                val navController = rememberNavController()
+                Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    LazyColumn {
-                        items(moviePreviews) {
-                            Text(it.title)
-                        }
+                    bottomBar = {
+                        BottomAppBar(
+                            actions = {
+                                IconButton(onClick = { navController.navigate(AppRoutes.Home.route) }) {
+                                    Icon(Icons.Filled.Home, contentDescription = null)
+                                }
+                                IconButton(onClick = { navController.navigate(AppRoutes.Discover.route) }) {
+                                    Icon(Icons.Filled.ExitToApp, contentDescription = null)
+                                }
+                                IconButton(onClick = { navController.navigate(AppRoutes.Search.route) }) {
+                                    Icon(Icons.Filled.Search, contentDescription = null)
+                                }
+                            }
+                        )
                     }
-                }
-
-                LaunchedEffect(Unit) {
-                    moviePreviews = getMoviePreviewUseCase()
+                ) { paddingValues ->
+                    NavigationGraph(
+                        navController = navController,
+                        modifier = Modifier.padding(paddingValues)
+                    )
                 }
             }
         }
